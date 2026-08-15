@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../src/index.ts"],
+  "sourcesContent": ["/**\n * Host entry for dsh-chat-tidy.\n *\n * The feature lives entirely in the Web client. The bundle patch mounts this\n * no-op entry so DSH discovers and serves the package's client bundle.\n */\n\n/** Stable Cordis loader name. */\nexport const name = 'dsh-chat-tidy'\n\n/** Mount the host half; no host services are required. */\nexport function apply(): void {}\n"],
+  "mappings": ";AAQO,IAAM,OAAO;AAGb,SAAS,QAAc;AAAC;",
+  "names": []
+}

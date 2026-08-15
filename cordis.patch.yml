@@ -1,0 +1,5 @@
+# dsh-chat-tidy bundle patch: mount the no-op host entry so the web profile
+# discovers and serves the package's browser client bundle.
+- insert:
+    - id: dsh-chat-tidy
+      name: dsh-chat-tidy

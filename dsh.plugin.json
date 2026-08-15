@@ -1,0 +1,13 @@
+{
+  "id": "dsh-chat-tidy",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "description": "Polished, compact chat typography and layout for the DeepSeek Harness Web UI.",
+  "engines": {
+    "dsh": ">=0.1.0-rc.6"
+  },
+  "contributes": {
+    "tools": [],
+    "skills": []
+  }
+}
