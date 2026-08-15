@@ -6,14 +6,22 @@ describe('Tidy Chat stylesheet', () => {
     document.head.querySelectorAll(`[data-plugin='${STYLE_MARKER}']`).forEach(element => { element.remove() })
   })
 
-  it('scopes conversation changes to the active mode and stable DSH anchors', () => {
-    expect(TIDY_CHAT_CSS).toContain("body[data-dsh-chat-tidy='balanced']")
+  it('targets stable DSH anchors and carries no mode gate', () => {
     expect(TIDY_CHAT_CSS).toContain("[data-chat-flow-kind='assistant-step']")
     expect(TIDY_CHAT_CSS).toContain(':where(p, li, blockquote, th, td)')
     expect(TIDY_CHAT_CSS).toContain('[data-composer-card]')
-    expect(TIDY_CHAT_CSS).toContain("[role='dialog']:has(.dsh-chat-tidy-settings)")
-    expect(TIDY_CHAT_CSS).toContain('var(--dsw-alias-label-primary)')
+    expect(TIDY_CHAT_CSS).toContain('var(--dsw-alias-label-secondary)')
+    expect(TIDY_CHAT_CSS).not.toContain('data-dsh-chat-tidy')
     expect(TIDY_CHAT_CSS).not.toMatch(/(?:^|\n)\s*\.markdown\s/u)
+  })
+
+  it('every conversation rule outranks the CSS-module defaults', () => {
+    const selectors = TIDY_CHAT_CSS.split('\n')
+      .filter(line => line.includes('[data-'))
+      .map(line => line.trim())
+
+    expect(selectors.length).toBeGreaterThan(0)
+    for (const selector of selectors) expect(selector.startsWith('body ')).toBe(true)
   })
 
   it('reference-counts one stylesheet per document', () => {

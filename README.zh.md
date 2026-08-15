@@ -1,23 +1,42 @@
 # dsh-chat-tidy
 
-Tidy Chat 用来改善 DeepSeek Harness Web 对话页的排版节奏。它会收敛字体层级、消息宽度、段落间距、用户气泡、Agent 活动行和输入框，但保留 DSH 原有的 Markdown 渲染、主题、工具调用、推理内容和会话行为。
+Tidy Chat 让 DeepSeek Harness Web 对话页的阅读节奏对齐成熟的 Coding Agent 客户端。所有数值都从 Codex 桌面端实测得到，再套用到 DSH 自己的聊天锚点上。DSH 原有的 Markdown 渲染、主题、工具调用、推理内容和会话行为都不改动。
 
 [English](README.md)
 
-## 改善内容
+![应用 Tidy Chat 后的 DSH Web 对话页](docs/images/hero.png)
 
-- 标题使用更克制的 21 / 18 / 16 px 层级，不再像普通 Markdown 文章那样忽大忽小。
-- 推荐模式的正文统一为 15 px / 25 px。
-- 收紧段落、列表、代码块、表格、工具行和回合之间的垂直间距。
-- 阅读区略微加宽并保持居中，输入框降低膨胀感。
-- 支持窄屏、浅色、深色和基于 DSH token 的第三方主题。
-- 在**设置 → 通用 → 聊天排版**中提供「平衡」「紧凑」「原始」三种模式。
+## 改动明细
 
-首次安装默认启用「平衡」。选择「原始」即可立即恢复 DSH 原始排版，不需要卸载插件。
+| 项目 | DSH 默认 | Tidy Chat（Codex 实测） |
+| --- | --- | --- |
+| 正文 | 16 / 28 px | **14 / 22 px** |
+| h1 – h6 | 24 / 22 / 20 / 16 / 16 / 16 px，字重 700 | **24 / 20 / 17 / 17 / 15 / 15 px，字重 600** |
+| 标题外边距 | 上 32 px、下 16 px | **上 20 px、下 10 px** |
+| 块间节奏 | 16 px | **11 px** |
+| 列表缩进 · 条目间距 | 18 px · 6 px | **21 px · 8 px** |
+| 分隔线（`hr`） | 32 px | 28 px |
+| 引用块 | 2 px 直角边框 | 圆角 4 px 竖条，缩进 18 px |
+| 表格单元格 | 15 / 25 px，内边距 10 × 16 px | 14 / 22 px，内边距 8 × 12 px |
+| 活动行 | 24 px，标签 14 / 24 px | 22 px，标签 13 / 22 px |
+
+阅读区宽度保持 DSH 原有的 748 px：Codex 实测约 730 px，说明原值本来就是合适的。同时回退了上一版两处过度收紧——列表条目间距回到 8 px，分隔线回到 28 px。
+
+![标题层级与正文在启用 Tidy Chat 前后的对比](docs/images/typography.png)
+
+### 前后对比
+
+两张对比图都在真实装配的 Web 应用中、用同一个预置会话、同一视口尺寸和同一缩放比例截取，两侧唯一的差别就是这张插件样式表。
+
+![同一视口在启用 Tidy Chat 前后的对比](docs/images/comparison.png)
+
+同一条回复完整渲染，默认高 1411 px，启用 Tidy Chat 后为 1127 px——同样的内容少滚 20%。
+
+![完整回复流在启用 Tidy Chat 前后的对比](docs/images/density.png)
 
 ## 设计边界
 
-Tidy Chat 是展示层插件，不是另一套聊天客户端。它不会：
+Tidy Chat 只是一张样式表：没有设置项、没有档位、不存任何状态；停用或卸载插件就是关闭开关。它不会：
 
 - 重新解析或清洗 Markdown；
 - 替换 `conversation.chat.node` 渲染器；
@@ -25,17 +44,15 @@ Tidy Chat 是展示层插件，不是另一套聊天客户端。它不会：
 - 使用 MutationObserver 改写 React DOM；
 - 修改模型输出、会话日志或 Host 数据。
 
-所有样式都受 `body[data-dsh-chat-tidy]` 和 DSH 语义锚点约束，包括 `data-chat-flow`、`data-chat-flow-kind`、`data-disclosure-row` 与 `data-composer-card`。颜色继续使用 `--dsw-*` token，因此内置主题和 token 型主题插件仍然拥有配色控制权。精确字号与生命周期见 [DESIGN.md](DESIGN.md)。
+选择器只使用 DSH 语义锚点（`data-chat-flow`、`data-chat-flow-kind`、`data-slot`、`data-disclosure-row`、`data-composer-card`、`data-turn-tail`、`data-time-hover-root`），绝不依赖生成的 CSS Module 类名。每条规则都带前导 `body`，因此无论样式表插入顺序如何，都能压过同优先级的模块默认值。颜色继续使用 `--dsw-*` token，内置主题和 token 型主题插件仍然拥有配色控制权。实测记录见 [DESIGN.md](DESIGN.md)。
 
 ## 安装
-
-从社区目录安装：
 
 ```sh
 dsh plugin --profile web add github:ChuanTianML/dsh-chat-tidy
 ```
 
-重启 `dsh web`，然后打开**设置 → 通用 → 聊天排版**。
+重启 `dsh web` 即生效。
 
 GitHub 仓库已经包含校验过的 Host 与 Client 构建产物，安装时不需要执行依赖构建脚本，也不需要修改 pnpm 的 `allowBuilds` 策略。
 
@@ -47,22 +64,20 @@ dsh plugin --profile web add -w /absolute/path/to/dsh-chat-tidy
 
 Web profile 本身是 pnpm workspace 根目录，因此本地路径安装需要 `-w`。
 
-## 三种模式
-
-| 模式 | 正文 | 标题 | 内容宽度 | 用途 |
-| --- | --- | --- | --- | --- |
-| 平衡 | 15/25 | 21/18/16 | 760 px | 推荐的日常阅读模式 |
-| 紧凑 | 14/23 | 19/17/15 | 820 px | 较长的技术会话 |
-| 原始 | DSH 默认 | DSH 默认 | DSH 默认 | 一键回退或对照 |
-
-选择结果保存在当前浏览器的 `dsh-chat-tidy:mode`。即使浏览器禁止 localStorage，页面也会继续使用仅当前会话有效的「平衡」模式，不会阻断 DSH 启动。
-
 ## 兼容性
 
 - **DSH 内置浅色/深色主题：**支持。
 - **dsh-skin：**兼容；Tidy Chat 负责几何与排版，dsh-skin 负责颜色。
 - **dsh-ux：**两个插件都会修改聊天字号和流间距，建议只启用其中一个布局插件，以免规则竞争。
 - **其他对话视图：**只有复用 DSH 语义 chat-flow 锚点的视图才会应用 Tidy Chat 样式。
+
+颜色一律来自宿主，所以深色主题下变化的只有几何与排版：
+
+![深色主题下的同一张样式表](docs/images/themes.png)
+
+窄到 700 CSS px 时 DSH 会自行收起侧边栏，用户气泡宽度上限回落到 88%，没有横向溢出：
+
+![700 px 视口在启用 Tidy Chat 前后的对比](docs/images/narrow.png)
 
 当前版本面向 DSH `>=0.1.0-rc.6`。如果未来 DSH 删除某个语义锚点，对应规则会自然失效，不会阻断页面渲染。
 
@@ -76,13 +91,13 @@ pnpm run check
 pnpm run pack:check
 ```
 
-`pnpm run check` 会执行严格类型检查、ESLint、Vitest、Host/Client 双端构建与生成产物新鲜度检查。测试覆盖偏好值校验、存储失败、跨标签页同步、样式引用计数、设置项可访问性、slot 注册和完整卸载清理。
+`pnpm run check` 会执行严格类型检查、ESLint、Vitest、Host/Client 双端构建与生成产物新鲜度检查。测试覆盖样式引用计数、锚点与优先级约束，以及完整卸载清理。
 
-0.1.0 的真实 Web profile 安装验证与浏览器测量结果见 [VALIDATION.md](VALIDATION.md)。
+浏览器实测结果见 [VALIDATION.md](VALIDATION.md)。
 
 ## 隐私与安全
 
-插件不会发起网络请求，只在 localStorage 保存排版模式。安全问题请按 [SECURITY.md](SECURITY.md) 的方式报告。
+插件不会发起网络请求，也不保存任何数据。安全问题请按 [SECURITY.md](SECURITY.md) 的方式报告。
 
 ## 许可证
 

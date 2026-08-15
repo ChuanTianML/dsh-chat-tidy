@@ -2,72 +2,83 @@
 
 ## Objective
 
-Make the default DSH conversation easier to scan and closer to the restrained density of mature coding-agent clients, without forking the chat renderer or changing information semantics.
+Make the DSH Web conversation read like a mature coding-agent client. Codex is the single target: every metric below is measured from it, not invented. Nothing about the chat renderer, information semantics, or color palette changes.
 
-The primary defect is not Markdown support. DSH already owns GFM, KaTeX, syntax highlighting, sanitization, streaming, attachments, file mentions, and tool views. The defect is the article-like scale applied inside a high-frequency work surface: 24/22/20 px headings, 32 px heading margins, and 16 px paragraph/list gaps produce large changes in visual volume from one model response to another.
+The defect being corrected is the article-like scale applied inside a high-frequency work surface: DSH renders 16 px body on 28 px leading with 32 px heading margins and 16 px block gaps, so visual volume swings sharply from one model response to another.
 
-## Visual system
+## Measurement method
 
-Balanced uses a 4 px-derived vertical rhythm:
+Two independent readings were taken and agreed:
 
-| Element | Balanced | Compact |
-| --- | --- | --- |
-| Body | 15 px / 25 px | 14 px / 23 px |
-| H1 | 21 px / 29 px | 19 px / 26 px |
-| H2 | 18 px / 26 px | 17 px / 24 px |
-| H3 | 16 px / 24 px | 15 px / 22 px |
-| Heading margin | 24 px / 8 px | 18 px / 6 px |
-| Paragraph/list margin | 10 px | 7 px |
-| Chat-flow gap | 14 px | 10 px |
-| Assistant block gap | 12 px | 9 px |
-| Content width | 760 px | 820 px |
-| User bubble | 15 px / 23 px | 14 px / 22 px |
-| Composer radius | 18 px | 16 px |
+1. The Codex desktop app's bundled stylesheets, extracted from `ChatGPT.app`'s `app.asar` (`app-*.css`).
+2. Pixel measurement of a live Codex window (2× retina screenshot, ink-row/column profiling to recover line pitch and box edges).
 
-Font family and colors remain inherited from DSH. Heading weight uses 650 when supported and naturally resolves between available static weights otherwise. The negative heading tracking is intentionally slight (`-0.018em`) and body tracking is nearly neutral (`-0.004em`).
+## Codex versus DSH
+
+| Item | DSH default | Codex measured | Tidy Chat applies |
+| --- | --- | --- | --- |
+| Body | 16 / 28 px (1.75) | 14 / 22 px, rule `font-size + 8px` | 14 / 22 px |
+| h1 | 24 / 34 px, weight 700 | 24 / 30 px (`line-height: 1.25`), weight 600 | 24 / 30 px, weight 600 |
+| h2 | 22 / 32 px, weight 700 | 20 / 25 px, weight 600 | 20 / 25 px, weight 600 |
+| h3, h4 | 20 / 30 px, 16 / 28 px | 17 / 22 px both | 17 / 22 px both |
+| h5, h6 | 16 / 28 px | 15 / 20 px | 15 / 20 px |
+| Heading margin | 32 px / 16 px | 20 px / 10 px | 20 px / 10 px |
+| Paragraph | `margin: 16px 0` | `margin: 0 0 11px` (.6875rem) | `margin: 0 0 11px` |
+| List indent | 18 px | 21 px (1.3125rem) | 21 px |
+| List item gap | 6 px | 8 px (.5rem) | 8 px |
+| List block margin | 16 px | 10 px (.625rem) | 10 px |
+| `hr` | 32 px | 28 px | 28 px |
+| Blockquote | 2 px square border, 14 px inset | rounded 4 px bar (radius 2 px), 24 px inset | rounded 4 px bar, 18 px inset |
+| Inline code | radius 6 px, padding 0 5px | radius 6 px, padding 1px 6px, `box-decoration-break: clone` | padding and clone only |
+| Table cells | 15 / 25 px tokens, 10 × 16 px | fixed 14 px | 14 / 22 px, 8 × 12 px |
+| Content width | 748 px | ≈730 px | unchanged at 748 px |
+
+Two deliberate divergences: inline-code `font-size` is left alone because DSH sets `0.875em !important` and an `!important` war is not worth a 0.045em difference; blockquote inset is 18 px rather than 24 px because DSH's quote text is not indented as deeply to begin with.
+
+Codex additionally tightens the gap between adjacent Han-script paragraphs to 4 px. That rule is not reproduced: DSH's `index.html` pins `lang="zh-CN"` statically, so a `:lang()` guard would also fire on English responses.
+
+The rightmost column is reproducible from the running app rather than from this table alone. The heading ladder and body text side by side, with the computed styles read from the live document:
+
+![The heading ladder and body text before and after Tidy Chat](docs/images/typography.png)
+
+The blockquote bar and the table cells, both panes drawn 1:1 so the visible size difference is the rendered one:
+
+![The blockquote bar and table cells before and after Tidy Chat](docs/images/blocks.png)
 
 ## Extension boundary
 
-The browser bundle contributes one Settings row through `settings.general.item`. Its CSS targets only:
+The browser bundle mounts one stylesheet. Its selectors target only:
 
-- a plugin-owned body marker;
-- the slot renderer's stable `[data-slot]` anchor;
 - conversation-owned semantic `data-*` attributes;
-- semantic Markdown elements below an `assistant-step` row;
-- plugin-owned Settings classes.
+- the slot renderer's stable `[data-slot]` anchor;
+- semantic Markdown elements below an `assistant-step` row.
 
-CSS module hashes are never referenced. The plugin does not register a keyed chat-node replacement or a `conversation.view`, because either would duplicate DSH's renderer and sever feature contributions added by other plugins.
+CSS-module hashes are never referenced. Because there is no plugin-owned body marker any more, each rule carries a leading `body` type selector: DSH's module rules such as `.markdown h1` score (0,1,1), and `body [data-chat-flow-kind='assistant-step'] h1` scores (0,1,2), so the plugin wins independently of injection order. `tests/styles.spec.ts` enforces that every anchored selector keeps the prefix.
+
+The plugin does not register a keyed chat-node replacement or a `conversation.view`, because either would duplicate DSH's renderer and sever feature contributions added by other plugins.
 
 ## Lifecycle
 
-The client mounts:
+The client mounts exactly one reference-counted `<style data-plugin="dsh-chat-tidy">`. Disposal removes the final reference and the element. There is no listener, no observer, and no timer.
 
-1. one reference-counted `<style data-plugin="dsh-chat-tidy">`;
-2. one controller that applies the stored mode to `<body>` and listens for cross-tab storage changes;
-3. one locale namespace;
-4. one General Settings slot entry.
+## Configuration
 
-Disposal removes the storage listener, restores the body attribute that existed before activation, unregisters dictionaries and the slot entry through Cordis effects, and removes the final stylesheet reference.
+None. Earlier releases shipped Balanced / Compact / Original modes; a mode switch implies the plugin is unsure what good looks like, and with a single measured target it is not. Disabling or uninstalling the plugin restores DSH defaults, which is what the Original mode did.
 
-## Persistence
-
-The current DSH browser settings transport exposes an allowlist of built-in namespaces. A visual preference therefore uses localStorage under `dsh-chat-tidy:mode`. Only three values are accepted; missing or malformed values resolve to Balanced. Storage read/write errors are swallowed because persistence failure must not block the Web UI.
-
-## Accessibility
-
-The mode selector is a labelled button group. Each option reports `aria-pressed`; focus uses the DSH business-color token and does not rely on color alone. Responsive rules stack the row and selector below 700 px and turn the selector into a vertical list below 480 px. Motion is limited to short Settings-control transitions and disabled under `prefers-reduced-motion`.
+Consequently nothing is persisted, no locale namespace is registered, and no Settings row is contributed.
 
 ## Compatibility and failure mode
 
-Rules use modern CSS already required by DSH's Chromium-class Web client, including `:has()` and `color-mix()`. A removed DSH semantic attribute produces an unmatched rule, not an exception. The plugin never uses a DOM observer, so a host DOM change cannot create a render loop or stale cloned node.
+Rules use modern CSS already required by DSH's Chromium-class Web client, including `:has()`. A removed DSH semantic attribute produces an unmatched rule, not an exception. The plugin never uses a DOM observer, so a host DOM change cannot create a render loop or stale cloned node.
 
-Token-based theme plugins are compatible. Layout plugins that set the same typography or chat-flow properties compete by definition; Tidy Chat raises specificity only inside its body scope and documents that users should select one layout plugin.
+Token-based theme plugins are compatible. Layout plugins that set the same typography or chat-flow properties compete by definition; users should select one layout plugin.
 
 ## Non-goals
 
-- Aggregating tool calls into a new synthetic “worked for” row.
+- Aggregating tool calls into a new synthetic "worked for" row.
 - Hiding reasoning or context by default.
 - Replacing the conversation header, sidebar, or editor layout.
 - Changing Markdown structure or model prompting.
+- Reproducing Codex's color palette, iconography, or chrome.
 
-Those require product-level renderer or view contributions and should be evaluated separately from typography polish.
+Those require product-level renderer or view contributions and should be evaluated separately from typography alignment.
