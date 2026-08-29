@@ -2,6 +2,22 @@
 
 All notable changes to this project are documented here.
 
+## 0.3.0 - 2026-08-29
+
+### Added
+
+- Added Tidy Tables: Markdown tables now render as complete 12 px rounded components with a theme-owned header surface, clear row and column separators, full-width presentation for short tables, and horizontal scrolling for wide tables.
+- Added regression coverage proving that table styling follows DSH's semantic conversation anchors and stable `div > table` structure without referencing generated CSS Module class names.
+
+### Changed
+
+- Raised table header weight to Codex's measured 600 while retaining the existing 14 / 22 px type and 8 × 12 px cell density.
+- Documented the deliberate DSH-native table frame separately from the Codex-measured typography target.
+
+### Documentation
+
+- Added a focused before/after capture that keeps the reply, viewport, theme, and device scale fixed so the table component change is directly visible.
+
 ## 0.2.0 - 2026-08-15
 
 ### Changed

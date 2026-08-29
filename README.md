@@ -1,6 +1,6 @@
 # dsh-chat-tidy
 
-Tidy Chat aligns the DeepSeek Harness Web conversation page with the reading rhythm of a mature coding-agent client. Every metric is measured from the Codex desktop app, then applied to DSH's own chat anchors. The Markdown renderer, theme, tool calls, reasoning, and session behavior are untouched.
+Tidy Chat aligns the DeepSeek Harness Web conversation page with the reading rhythm of a mature coding-agent client. Typography and spacing are measured from the Codex desktop app, then applied to DSH's own chat anchors. Tidy Tables completes Markdown tables with DSH-native component chrome. The Markdown renderer, theme, tool calls, reasoning, and session behavior are untouched.
 
 [简体中文](README.zh.md)
 
@@ -17,12 +17,18 @@ Tidy Chat aligns the DeepSeek Harness Web conversation page with the reading rhy
 | List indent · item gap | 18 px · 6 px | **21 px · 8 px** |
 | Rule (`hr`) | 32 px | 28 px |
 | Blockquote | 2 px square border | rounded 4 px bar, 18 px inset |
-| Table cells | 15 / 25 px, 10 × 16 px padding | 14 / 22 px, 8 × 12 px padding |
+| Tables | Open edges; 15 / 25 px, 10 × 16 px cells | Rounded component; themed header; row and column rules; 14 / 22 px, 8 × 12 px cells |
 | Activity rows | 24 px, 14 / 24 px label | 22 px, 13 / 22 px label |
 
 The reading column stays at DSH's 748 px, because Codex measures ≈730 px — the existing width was already right. Two earlier over-tightenings are reversed: list items go back out to 8 px and horizontal rules to 28 px.
 
 ![The heading ladder and body text before and after Tidy Chat](docs/images/typography.png)
+
+### Tidy Tables
+
+Tables now read as one component instead of a set of open horizontal rules. The shell uses DSH's own 12 px code-block radius and theme tokens; the header adopts the code-block banner surface and Codex's measured weight 600; short tables fill the reading column, while wide tables keep horizontal scrolling. No table content or alignment is rewritten.
+
+![The same Markdown table before and after Tidy Tables](docs/images/tidy-tables.png)
 
 ### Side by side
 
@@ -44,7 +50,7 @@ Tidy Chat is a stylesheet and nothing else. There is no preference, no Settings 
 - observe and rewrite React DOM nodes;
 - change model output, session logs, or host data.
 
-Selectors use DSH's semantic anchors (`data-chat-flow`, `data-chat-flow-kind`, `data-slot`, `data-disclosure-row`, `data-composer-card`, `data-turn-tail`, `data-time-hover-root`), never generated CSS-module class names. Each one carries a leading `body` so it outranks the equal-specificity module default regardless of stylesheet order. Colors continue to come from `--dsw-*` tokens, so built-in themes and token-based theme plugins keep palette ownership. See [DESIGN.md](DESIGN.md) for the measurement record.
+Selectors use DSH's semantic anchors (`data-chat-flow`, `data-chat-flow-kind`, `data-slot`, `data-disclosure-row`, `data-composer-card`, `data-turn-tail`, `data-time-hover-root`), never generated CSS-module class names. Each one carries a leading `body` so it outranks the equal-specificity module default regardless of stylesheet order. Colors continue to come from `--dsw-*` tokens, so built-in themes and token-based theme plugins keep palette ownership. The table shell is found through the stable rendered structure below those anchors, never its generated class. See [DESIGN.md](DESIGN.md) for the measurement and component record.
 
 ## Install
 
@@ -91,7 +97,7 @@ pnpm run check
 pnpm run pack:check
 ```
 
-`pnpm run check` runs strict typechecking, ESLint, Vitest, both host/client builds, and a generated-bundle freshness check. The tests cover stylesheet reference counting, anchor and specificity discipline, and complete disposal.
+`pnpm run check` runs strict typechecking, ESLint, Vitest, both host/client builds, and a generated-bundle freshness check. The tests cover stylesheet reference counting, anchor and specificity discipline, stable table-shell targeting, table component rules, and complete disposal.
 
 See [VALIDATION.md](VALIDATION.md) for measured browser results.
 
