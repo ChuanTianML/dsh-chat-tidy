@@ -1,6 +1,6 @@
 # Validation record
 
-This record captures the release checks performed for `dsh-chat-tidy` 0.3.0 on 2026-08-29 against a source checkout of DeepSeek Harness `>=0.1.0-rc.6`.
+This record captures the release checks performed for `dsh-chat-tidy` 0.3.0 on 2026-08-30 against a source checkout of DeepSeek Harness `>=0.1.0-rc.6`.
 
 ## Automated checks
 
@@ -9,7 +9,7 @@ pnpm run check
 pnpm run pack:check
 ```
 
-`pnpm run check` passed strict TypeScript checks, ESLint, 6 Vitest tests across 2 files, both the host and Web-client builds, and the generated-bundle freshness check. The package dry run contained only the declared release files, including the new Tidy Tables comparison image.
+`pnpm run check` passed strict TypeScript checks, ESLint, 6 Vitest tests across 2 files, both the host and Web-client builds, and the generated-bundle freshness check. The package dry run contained only the declared release files, including the new Tidy Tables comparison image and the eight-entry storefront screenshot manifest.
 
 ## Measured browser results
 

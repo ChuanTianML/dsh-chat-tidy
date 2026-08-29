@@ -2,7 +2,7 @@
 
 All notable changes to this project are documented here.
 
-## 0.3.0 - 2026-08-29
+## 0.3.0 - 2026-08-30
 
 ### Added
 
@@ -17,6 +17,7 @@ All notable changes to this project are documented here.
 ### Documentation
 
 - Added a focused before/after capture that keeps the reply, viewport, theme, and device scale fixed so the table component change is directly visible.
+- Declared a storefront screenshot order that leads with the Tidy Tables comparison and retains the seven existing assembled-app captures.
 
 ## 0.2.0 - 2026-08-15
 
