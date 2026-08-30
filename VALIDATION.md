@@ -1,6 +1,6 @@
 # Validation record
 
-This record captures the release checks performed for `dsh-chat-tidy` 0.2.0 on 2026-08-15 against a source checkout of DeepSeek Harness `>=0.1.0-rc.6`.
+This record captures the release checks performed for `dsh-chat-tidy` 0.3.0 on 2026-08-30 against a source checkout of DeepSeek Harness `>=0.1.0-rc.6`.
 
 ## Automated checks
 
@@ -9,7 +9,7 @@ pnpm run check
 pnpm run pack:check
 ```
 
-`pnpm run check` passed strict TypeScript checks, ESLint, 4 Vitest tests across 2 files, both the host and Web-client builds, and the generated-bundle freshness check. The package dry run contained only the declared release files.
+`pnpm run check` passed strict TypeScript checks, ESLint, 6 Vitest tests across 2 files, both the host and Web-client builds, and the generated-bundle freshness check. The package dry run contained only the declared release files, including the new Tidy Tables comparison image and the eight-entry storefront screenshot manifest.
 
 ## Measured browser results
 
@@ -33,6 +33,22 @@ Every metric landed on its Codex target. The reading column is left alone delibe
 
 Two divergences from Codex are intentional and recorded in [DESIGN.md](DESIGN.md): inline code keeps DSH's `font-size: 0.875em !important`, and the blockquote inset is 18 px rather than 24 px.
 
+## Tidy Tables browser results
+
+The 0.3.0 browser lane installed the local release bundle into an isolated DSH Web profile, created a real Workspace and Session through the loopback API, ran the real Agent loop against a local streaming model fixture, and let DSH's production React Markdown renderer produce two tables. Before and after captures came from that one rendered assistant node by disabling only `<style data-plugin="dsh-chat-tidy">` between reads.
+
+| Property | DSH default | With Tidy Tables |
+| --- | --- | --- |
+| Outer rule | none | 1 px solid `rgba(0, 0, 0, 0.1)` |
+| Outer radius | 0 px | 12 px |
+| Table minimum width | 0 px | 100 % |
+| Header weight | 500 | 600 |
+| Header surface | transparent | `rgb(249, 250, 251)` from the host token |
+| Cell padding | 10 × 16 px source default | 8 × 12 px computed |
+| Wide table | open table width | 999 px scroll width contained by a 746 px shell |
+
+The 8-column table produced internal horizontal overflow while the 1280 px page remained exactly 1280 px wide. At a 700 px viewport the page client and scroll widths both remained 700 px. Under `body[data-ds-dark-theme]`, computed table colors changed to a `rgb(21, 21, 23)` shell, `rgb(44, 44, 46)` header, and `rgba(255, 255, 255, 0.12)` border without a plugin-specific dark-mode rule.
+
 ## Visual checks
 
 Captured from the same session, seeded with a reply that exercises headings h1 – h4, paragraphs, nested lists, a blockquote, a table, inline code, a fenced code block, and a horizontal rule:
@@ -42,6 +58,7 @@ Captured from the same session, seeded with a reply that exercises headings h1 �
 - the whole application window with the plugin applied — [`docs/images/hero.png`](docs/images/hero.png);
 - the same stylesheet under the built-in dark theme, before and after, showing the geometry changes while every colour still comes from the `--dsw-*` tokens — [`docs/images/themes.png`](docs/images/themes.png);
 - the conversation at 700 × 900 CSS px with no horizontal overflow, where DSH collapses its own sidebar and the user-bubble cap falls back to 88 % — [`docs/images/narrow.png`](docs/images/narrow.png).
+- the focused 0.3.0 table component before and after, rendered from the same real assistant reply — [`docs/images/tidy-tables.png`](docs/images/tidy-tables.png).
 
 No plugin error or warning appeared in the browser console.
 

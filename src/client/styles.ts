@@ -1,7 +1,10 @@
-/** Tidy Chat's conversation stylesheet, measured against the Codex desktop client. */
+/** Tidy Chat's Codex-aligned conversation stylesheet. */
 
 /** Marker used to find the plugin-owned stylesheet during lifecycle cleanup. */
 export const STYLE_MARKER = 'dsh-chat-tidy'
+
+/** Stable DSH structure that owns one rendered Markdown table. */
+export const TIDY_TABLE_SHELL_SELECTOR = "body [data-chat-flow-kind='assistant-step'] [data-slot='conversation.chat.node'] :where(div):has(> table)"
 
 /**
  * Metrics come from the Codex desktop client: its bundled stylesheet plus pixel
@@ -11,7 +14,9 @@ export const STYLE_MARKER = 'dsh-chat-tidy'
  *
  * Selectors use documented DSH chat anchors and carry a leading `body` so each
  * rule outranks the equal-specificity CSS-module defaults regardless of
- * stylesheet order. Color stays on DSH design tokens so themes keep the palette.
+ * stylesheet order. Tidy Tables keeps Codex's measured cell density, then uses
+ * DSH's own 12px code-block geometry and theme tokens for the component frame.
+ * Color stays on DSH design tokens so themes keep the palette.
  */
 export const TIDY_CHAT_CSS = String.raw`
 :root {
@@ -22,6 +27,7 @@ export const TIDY_CHAT_CSS = String.raw`
   --dsh-ct-heading-bottom: 10px;
   --dsh-ct-list-indent: 21px;
   --dsh-ct-user-width: 560px;
+  --dsh-ct-table-radius: 12px;
 }
 
 body [data-chat-flow] {
@@ -121,9 +127,54 @@ body [data-chat-flow-kind='assistant-step'] hr {
   margin-block: 28px;
 }
 
-body [data-chat-flow-kind='assistant-step'] :where(th, td) {
+${TIDY_TABLE_SHELL_SELECTOR} {
+  margin-block: 12px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: var(--dsh-ct-table-radius);
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  background: var(--dsw-alias-bg-base);
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} > table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  max-width: none;
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} :where(th, td) {
   padding-block: 8px;
   padding-inline: 12px;
+  overflow-wrap: anywhere;
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} th {
+  border-bottom: 1px solid var(--dsw-alias-border-l3);
+  background: var(--dsw-alias-markdown-code-block-banner);
+  font-weight: 600;
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} td {
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} :where(th, td):not(:last-child) {
+  border-inline-end: 1px solid var(--dsw-alias-border-l2);
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} :where(th, td):first-child {
+  padding-inline-start: 12px;
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} :where(th, td):last-child {
+  padding-inline-end: 12px;
+}
+
+${TIDY_TABLE_SHELL_SELECTOR} tbody tr:last-child td {
+  border-bottom: 0;
 }
 
 body [data-chat-flow] [data-disclosure-row] {

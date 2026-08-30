@@ -2,7 +2,7 @@
 
 ## Objective
 
-Make the DSH Web conversation read like a mature coding-agent client. Codex is the single target: every metric below is measured from it, not invented. Nothing about the chat renderer, information semantics, or color palette changes.
+Make the DSH Web conversation read like a mature coding-agent client. Codex is the target for typography and density: every metric below is measured from it, not invented. Tidy Tables deliberately completes the table frame with DSH's own component vocabulary. Nothing about the chat renderer, information semantics, or host-owned color palette changes.
 
 The defect being corrected is the article-like scale applied inside a high-frequency work surface: DSH renders 16 px body on 28 px leading with 32 px heading margins and 16 px block gaps, so visual volume swings sharply from one model response to another.
 
@@ -10,7 +10,7 @@ The defect being corrected is the article-like scale applied inside a high-frequ
 
 Two independent readings were taken and agreed:
 
-1. The Codex desktop app's bundled stylesheets, extracted from `ChatGPT.app`'s `app.asar` (`app-*.css`).
+1. The Codex desktop app's bundled stylesheets and Markdown editor theme, extracted from `ChatGPT.app`'s `app.asar` (`app-*.css` and `app-initial-*.js`).
 2. Pixel measurement of a live Codex window (2× retina screenshot, ink-row/column profiling to recover line pitch and box edges).
 
 ## Codex versus DSH
@@ -30,7 +30,7 @@ Two independent readings were taken and agreed:
 | `hr` | 32 px | 28 px | 28 px |
 | Blockquote | 2 px square border, 14 px inset | rounded 4 px bar (radius 2 px), 24 px inset | rounded 4 px bar, 18 px inset |
 | Inline code | radius 6 px, padding 0 5px | radius 6 px, padding 1px 6px, `box-decoration-break: clone` | padding and clone only |
-| Table cells | 15 / 25 px tokens, 10 × 16 px | fixed 14 px | 14 / 22 px, 8 × 12 px |
+| Table cells | 15 / 25 px tokens, 10 × 16 px | inherited 14 / 22 px, 8 × 12 px, header weight 600 | 14 / 22 px, 8 × 12 px, header weight 600 |
 | Content width | 748 px | ≈730 px | unchanged at 748 px |
 
 Two deliberate divergences: inline-code `font-size` is left alone because DSH sets `0.875em !important` and an `!important` war is not worth a 0.045em difference; blockquote inset is 18 px rather than 24 px because DSH's quote text is not indented as deeply to begin with.
@@ -45,6 +45,14 @@ The blockquote bar and the table cells, both panes drawn 1:1 so the visible size
 
 ![The blockquote bar and table cells before and after Tidy Chat](docs/images/blocks.png)
 
+## Tidy Tables component
+
+Codex's Markdown editor theme establishes the compact table rhythm: each cell uses 8 px block and 12 px inline padding, adjacent body rows have a 1 px separator, and header cells use weight 600. Tidy Chat already owned the inherited 14 / 22 px type, so 0.3.0 completes those measured properties without changing cell content or alignment.
+
+The user-approved table frame is a deliberate DSH-native extension rather than a claim about Codex's table chrome. It uses a 1 px `--dsw-alias-border-l2` outer rule, DSH's existing 12 px code-block radius, `--dsw-alias-markdown-code-block-banner` for the header surface, and host border tokens for row and column rules. The table keeps `width: max-content` for wide content, adds `min-width: 100%` for short tables, and leaves the existing horizontal scrolling behavior in place.
+
+![The same Markdown table before and after the Tidy Tables component](docs/images/tidy-tables.png)
+
 ## Extension boundary
 
 The browser bundle mounts one stylesheet. Its selectors target only:
@@ -53,7 +61,7 @@ The browser bundle mounts one stylesheet. Its selectors target only:
 - the slot renderer's stable `[data-slot]` anchor;
 - semantic Markdown elements below an `assistant-step` row.
 
-CSS-module hashes are never referenced. Because there is no plugin-owned body marker any more, each rule carries a leading `body` type selector: DSH's module rules such as `.markdown h1` score (0,1,1), and `body [data-chat-flow-kind='assistant-step'] h1` scores (0,1,2), so the plugin wins independently of injection order. `tests/styles.spec.ts` enforces that every anchored selector keeps the prefix.
+CSS-module hashes are never referenced. The table shell is identified as the stable `div` that directly owns a `table` below the assistant node's semantic anchors; a generated `.tableScroll` name is neither read nor copied. Because there is no plugin-owned body marker any more, each rule carries a leading `body` type selector: DSH's module rules such as `.markdown h1` score (0,1,1), and `body [data-chat-flow-kind='assistant-step'] h1` scores (0,1,2), so the plugin wins independently of injection order. `tests/styles.spec.ts` enforces the prefix and proves the table selector still matches after its generated class changes.
 
 The plugin does not register a keyed chat-node replacement or a `conversation.view`, because either would duplicate DSH's renderer and sever feature contributions added by other plugins.
 

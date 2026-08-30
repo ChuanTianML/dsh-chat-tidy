@@ -1,6 +1,8 @@
-/** Tidy Chat's conversation stylesheet, measured against the Codex desktop client. */
+/** Tidy Chat's Codex-aligned conversation stylesheet. */
 /** Marker used to find the plugin-owned stylesheet during lifecycle cleanup. */
 export declare const STYLE_MARKER = "dsh-chat-tidy";
+/** Stable DSH structure that owns one rendered Markdown table. */
+export declare const TIDY_TABLE_SHELL_SELECTOR = "body [data-chat-flow-kind='assistant-step'] [data-slot='conversation.chat.node'] :where(div):has(> table)";
 /**
  * Metrics come from the Codex desktop client: its bundled stylesheet plus pixel
  * measurement of a live window. Body text is 14px on a `font-size + 8px` leading
@@ -9,7 +11,9 @@ export declare const STYLE_MARKER = "dsh-chat-tidy";
  *
  * Selectors use documented DSH chat anchors and carry a leading `body` so each
  * rule outranks the equal-specificity CSS-module defaults regardless of
- * stylesheet order. Color stays on DSH design tokens so themes keep the palette.
+ * stylesheet order. Tidy Tables keeps Codex's measured cell density, then uses
+ * DSH's own 12px code-block geometry and theme tokens for the component frame.
+ * Color stays on DSH design tokens so themes keep the palette.
  */
 export declare const TIDY_CHAT_CSS: string;
 /**
