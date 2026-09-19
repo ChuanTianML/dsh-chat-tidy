@@ -24,7 +24,7 @@ An isolated local Harness host used synthetic session events and a keyless strea
 - Stopping a second turn retained commentary and interrupted reasoning; its work header remained expanded.
 - English/Chinese controls followed the host language. Light/dark appearance followed host tokens. No warning or error was recorded in the demo page's browser console.
 
-The current Chrome viewport was 1450 CSS px wide. A requested 700 px override did not change the observed viewport, so this release does not claim a new narrow-screen browser measurement; the earlier 0.3.0 measurements below remain historical evidence for unchanged typography/table styles.
+Chrome desktop captures used a 1450 CSS px viewport. A separate responsive check used the in-app browser at 700 × 900 CSS px: document client width and scroll width were both 700 px before and after expanding the work. Native sidebar collapse, wrapped commentary, activity controls, and the final table remained usable. The earlier 0.3.0 measurements below are historical evidence for unchanged typography/table styles.
 
 ### Publication images
 
