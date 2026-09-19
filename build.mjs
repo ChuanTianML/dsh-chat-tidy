@@ -22,6 +22,8 @@ await build({
   format: 'cjs',
   platform: 'browser',
   target: ['es2022'],
+  jsx: 'automatic',
+  external: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
   sourcemap: true,
   banner: {
     js: "window.__ModuleLoader__.load({ id: 'dsh-chat-tidy', factory: (require) => { var module = { exports: {} }; var exports = module.exports;",

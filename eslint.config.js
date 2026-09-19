@@ -5,7 +5,7 @@ export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ['lib/**', 'coverage/**', 'node_modules/**'],
+    ignores: ['lib/**', 'coverage/**', 'node_modules/**', 'reviews/**'],
   },
   {
     rules: {

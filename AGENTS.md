@@ -3,7 +3,8 @@
 dsh-chat-tidy is a standalone, browser-first DeepSeek Harness plugin.
 
 - Preserve the no-op host entry and the browser bundle id `dsh-chat-tidy`.
-- The plugin is a stylesheet and nothing else: no preferences, no Settings row, no DOM observation. Disabling the plugin is the off switch.
+- Keep the host entry inert. Browser controls derive decisions from public session subscriptions; DOM observation only locates semantic anchors. Never move or clone native React nodes.
+- Disabling the plugin is the off switch: restore all hidden rows and dispose controls, observers, timers, and in-memory reader choices. No persistent preferences or Settings row.
 - Target stable semantic DSH anchors only; never generated CSS module class names.
 - Prefix every conversation selector with `body ` so it outranks the equal-specificity CSS-module default regardless of stylesheet order.
 - Justify each metric against a Codex measurement recorded in DESIGN.md; do not invent values.

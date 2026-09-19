@@ -2,6 +2,21 @@
 
 All notable changes to this project are documented here.
 
+## 0.4.0 - 2026-09-19
+
+### Added
+
+- Tidy Work: live turn timing, completed-work disclosure, and nested activity summaries that retain native Think and tool-card interactions.
+- Separate visibility for reasoning and final Markdown within the same assistant row.
+- Protection for interrupted output, failed tools, pending interactions, extension content, text selection, and focused native controls.
+- English and Simplified Chinese labels, keyboard disclosure controls, reduced motion, and in-memory expansion choices per session.
+- Policy and DOM lifecycle regressions, plus a built-bundle integration check using Harness's actual ModuleLoader, projection, and React components.
+
+### Changed
+
+- The browser plugin now subscribes to public session state and observes semantic node mounts; it remains host-inert and makes no network requests.
+- Corrected outdated security and contribution documentation that still described the removed presentation-mode preference.
+
 ## 0.3.0 - 2026-08-30
 
 ### Added
