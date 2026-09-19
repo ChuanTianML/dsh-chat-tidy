@@ -1,5 +1,37 @@
 # Validation record
 
+## 0.4.0 — Tidy Work
+
+Validated on 2026-09-19 against the built DeepSeek Harness source checkout `c615b196a2796fce347b2c5c21c9276da7def0ee`. This release changes only the standalone plugin; the host was not patched for the feature.
+
+### Automated checks
+
+- `pnpm run check` passed, including strict source/test TypeScript checking, ESLint, all unit tests, both bundle builds, and the generated-bundle freshness check.
+- `pnpm run pack:check` passed; the dry run contained 35 declared release files and excluded private review material, source tests, local profiles, and credentials.
+- 51 Vitest tests passed across 5 files: turn/final-answer classification, mixed reasoning and Markdown, passive-tool grouping, failed and nested calls, pending interactions, incomplete history, interruption, native DOM mounting, selection/focus protection, manual expansion, session lifecycle, timers, scrolling, disposal, styles, and localization.
+- Both distributable bundles were rebuilt. The generated-bundle freshness gate is part of `pnpm run check`.
+- `pnpm run test:harness` passed its assembled regression with the actual Harness ModuleLoader, Chat projection, React renderers, and built plugin bundle. This is a jsdom integration check, not a browser screenshot test.
+
+### Chrome acceptance
+
+An isolated local Harness host used synthetic session events and a keyless streaming adapter. All UI interaction and captures used the real browser page. The capture fixture is in [integration/](integration/README.md).
+
+- Working header updated with elapsed time; after a page reload it continued from the recorded start instead of resetting.
+- Progress commentary stayed visible while native reasoning/tool activity grouped into expandable summaries.
+- Completing the streamed turn automatically collapsed intermediate work and preserved the final Markdown, table, and native response actions.
+- Expanding work retained its viewport position: the header measured 216 CSS px from the top before and after expansion.
+- Enter and Space operated disclosure controls. Expanding a group exposed native Think and Bash cards, and the Bash card still opened its command/output details.
+- Stopping a second turn retained commentary and interrupted reasoning; its work header remained expanded.
+- English/Chinese controls followed the host language. Light/dark appearance followed host tokens. No warning or error was recorded in the demo page's browser console.
+
+Chrome desktop captures used a 1450 CSS px viewport. A separate responsive check used the in-app browser at 700 × 900 CSS px: document client width and scroll width were both 700 px before and after expanding the work. Native sidebar collapse, wrapped commentary, activity controls, and the final table remained usable. The earlier 0.3.0 measurements below are historical evidence for unchanged typography/table styles.
+
+### Publication images
+
+[Working](docs/images/tidy-work-working.png), [completed](docs/images/tidy-work-completed.png), [expanded](docs/images/tidy-work-expanded.png), and [dark theme](docs/images/tidy-work-dark.png) are unedited real-app captures. The first three appear on both READMEs and lead the storefront screenshot list. The text, commands, workspace, and results are synthetic; no private conversation, credential, or personal filesystem path appears. The displayed check results are demonstration content, not evidence of a model performing those checks.
+
+## Earlier release: 0.3.0
+
 This record captures the release checks performed for `dsh-chat-tidy` 0.3.0 on 2026-08-30 against a source checkout of DeepSeek Harness `>=0.1.0-rc.6`.
 
 ## Automated checks

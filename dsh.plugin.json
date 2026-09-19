@@ -1,8 +1,8 @@
 {
   "id": "dsh-chat-tidy",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "lib/index.js",
-  "description": "Codex-aligned chat typography, layout, and polished Markdown tables for DeepSeek Harness.",
+  "description": "Codex-inspired turn disclosure, live work timers, chat typography and Markdown tables for DeepSeek Harness",
   "engines": {
     "dsh": ">=0.1.0-rc.6"
   },

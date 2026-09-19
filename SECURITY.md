@@ -10,4 +10,6 @@ Please report a suspected vulnerability privately through GitHub Security Adviso
 
 ## Data handling
 
-Tidy Chat makes no network requests and does not read conversation content. It stores only the selected presentation mode in browser localStorage under `dsh-chat-tidy:mode`.
+Tidy Chat reads the current Harness session projection in the browser to identify turns, reasoning, tool categories, pending interactions, and the final answer. It sends nothing to a server and makes no network requests. It does not alter session logs, prompts, model output, credentials, or permissions.
+
+Expansion choices are kept only in memory for the plugin lifetime. The plugin does not write localStorage, cookies, or other persistent browser storage. Disabling it restores original visibility and removes its controls, observers, timers, and styles.

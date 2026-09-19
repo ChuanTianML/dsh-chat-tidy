@@ -1,4 +1,3 @@
-/** Tidy Chat's Codex-aligned conversation stylesheet. */
 /** Marker used to find the plugin-owned stylesheet during lifecycle cleanup. */
 export declare const STYLE_MARKER = "dsh-chat-tidy";
 /** Stable DSH structure that owns one rendered Markdown table. */

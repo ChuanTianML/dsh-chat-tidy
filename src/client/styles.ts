@@ -1,4 +1,5 @@
 /** Tidy Chat's Codex-aligned conversation stylesheet. */
+import { PROCESS_CSS } from './process-styles.ts'
 
 /** Marker used to find the plugin-owned stylesheet during lifecycle cleanup. */
 export const STYLE_MARKER = 'dsh-chat-tidy'
@@ -214,6 +215,7 @@ body [data-composer-card] {
     max-width: 88%;
   }
 }
+${PROCESS_CSS}
 `
 
 interface StyleRecord {

@@ -1,7 +1,7 @@
 {
   "name": "dsh-chat-tidy",
-  "version": "0.3.0",
-  "description": "Codex-aligned chat typography, layout, and polished Markdown tables for DeepSeek Harness",
+  "version": "0.4.0",
+  "description": "Codex-inspired turn disclosure, live work timers, chat typography and Markdown tables for DeepSeek Harness",
   "license": "MIT",
   "author": "ChuanTianML",
   "repository": {
@@ -43,9 +43,10 @@
     },
     "client": {
       "platform": "web",
-      "immediately": true,
       "inject": [
-        "@deepseek-ai/dsh-client-runtime"
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-locale"
       ]
     }
   },
@@ -70,7 +71,8 @@
     "lint": "eslint .",
     "verify:build": "pnpm run build && git diff --exit-code -- lib",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run verify:build",
-    "pack:check": "pnpm pack --dry-run --json"
+    "pack:check": "pnpm pack --dry-run --json",
+    "test:harness": "node scripts/test-harness.mjs"
   },
   "engines": {
     "node": "^22.19 || >=24"
@@ -83,6 +85,20 @@
     "jsdom": "^26.0.0",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.35.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/dom": "^10.4.1"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   }
 }

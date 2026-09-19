@@ -2,7 +2,7 @@
 
 ## Objective
 
-Make the DSH Web conversation read like a mature coding-agent client. Codex is the target for typography and density: every metric below is measured from it, not invented. Tidy Tables deliberately completes the table frame with DSH's own component vocabulary. Nothing about the chat renderer, information semantics, or host-owned color palette changes.
+Make the DSH Web conversation read like a mature coding-agent client. Codex is the target for typography and density: every metric below is measured from it, not invented. Tidy Tables deliberately completes the table frame with DSH's own component vocabulary. Native renderers, logged content, and host-owned colors remain authoritative. Tidy Work adds reversible presentation state in 0.4.0.
 
 The defect being corrected is the article-like scale applied inside a high-frequency work surface: DSH renders 16 px body on 28 px leading with 32 px heading margins and 16 px block gaps, so visual volume swings sharply from one model response to another.
 
@@ -53,40 +53,40 @@ The user-approved table frame is a deliberate DSH-native extension rather than a
 
 ![The same Markdown table before and after the Tidy Tables component](docs/images/tidy-tables.png)
 
-## Extension boundary
+## Tidy Work (0.4.0)
 
-The browser bundle mounts one stylesheet. Its selectors target only:
+Codex reference: desktop 26.901.41123, observed in running and completed turns. The reference puts a work-duration header above a divider, preserves progress commentary while running, aggregates consecutive activity, and lets completed work fold independently of the final assistant answer. This plugin implements that interaction using Harness-owned events; it does not reuse Codex code.
 
-- conversation-owned semantic `data-*` attributes;
-- the slot renderer's stable `[data-slot]` anchor;
-- semantic Markdown elements below an `assistant-step` row.
+The header and group labels reuse the measured 13 / 22 px activity rhythm. The 8 px label/chevron gap, 12 px header top spacing, and 14 px divider clearance reuse the existing compact spacing vocabulary. The 1 px divider uses the host border token. Only the chevron animates (150 ms); reduced-motion disables it. These header spacing choices are a DSH adaptation, not additional pixel-for-pixel Codex claims.
 
-CSS-module hashes are never referenced. The table shell is identified as the stable `div` that directly owns a `table` below the assistant node's semantic anchors; a generated `.tableScroll` name is neither read nor copied. Because there is no plugin-owned body marker any more, each rule carries a leading `body` type selector: DSH's module rules such as `.markdown h1` score (0,1,1), and `body [data-chat-flow-kind='assistant-step'] h1` scores (0,1,2), so the plugin wins independently of injection order. `tests/styles.spec.ts` enforces the prefix and proves the table selector still matches after its generated class changes.
+### Completion and visibility
 
-The plugin does not register a keyed chat-node replacement or a `conversation.view`, because either would duplicate DSH's renderer and sever feature contributions added by other plugins.
+`turn/end` must report `completed`, the host's `turn-tail` projection must identify a content-bearing final assistant, and the loaded history must include `turn/start` before a turn defaults to collapsed. A closed turn alone is insufficient. Streaming prose is never treated as the final answer. Time comes from the logged boundaries, not per-tool sums or the moment the page mounted.
 
-## Lifecycle
+The final assistant's text remains visible even when its reasoning shares the same native row. Progress commentary is foldable only after normal completion. Errors, interrupted output, context, unknown block types, images, unsupported tools, and extension nodes form visible barriers. Pending questions and approvals keep active tools visible; their native composer interfaces are untouched. A tool with a failed or unsupported nested call is also kept visible.
 
-The client mounts exactly one reference-counted `<style data-plugin="dsh-chat-tidy">`. Disposal removes the final reference and the element. There is no listener, no observer, and no timer.
+Supported passive tools are an explicit allowlist. Consecutive pure reasoning and tool rows share one group. Text splits activity groups; trailing reasoning can share a summary with the following tool row while remaining at its original position. Group labels contain action categories and counts, not paths or command text.
 
-## Configuration
+### Native presentation attachment
 
-None. Earlier releases shipped Balanced / Compact / Original modes; a mode switch implies the plugin is unsure what good looks like, and with a single measured target it is not. Disabling or uninstalling the plugin restores DSH defaults, which is what the Original mode did.
+Harness currently exposes a keyed node renderer but no turn-grouping renderer. Replacing Chat would duplicate its paging, scroll, composer, tool, and extension behavior. Instead, the plugin registers a nonvisual subscription in `conversation.session.header.utilities`, scopes it to that conversation column, and inserts its own buttons beside semantic native anchors.
 
-Consequently nothing is persisted, no locale namespace is registered, and no Settings row is contributed.
+The controller reads `chat.order`, `chat.nodes`, `chat.timeline`, `running`, and `pending` through `useSession`. A child-list MutationObserver only finds native mounts and streamed children; it never infers model state from text. Own-control mutations are ignored and native mutations are coalesced. It never moves, clones, reparents, or recreates a native React node. Generated CSS-module class names are never read.
 
-## Compatibility and failure mode
+Visibility uses a plugin-owned attribute; controls reference native elements through `aria-controls`, and generated ids are removed on disposal. Unmatched anchors do not cause matched siblings to disappear into a partially mounted activity group. Native detail expansion and event handlers survive the plugin's show/hide operations.
 
-Rules use modern CSS already required by DSH's Chromium-class Web client, including `:has()`. A removed DSH semantic attribute produces an unmatched rule, not an exception. The plugin never uses a DOM observer, so a host DOM change cannot create a render loop or stale cloned node.
+### Reader state and lifecycle
 
-Token-based theme plugins are compatible. Layout plugins that set the same typography or chat-flow properties compete by definition; users should select one layout plugin.
+Explicit turn and group expansion is retained in memory per session for the plugin lifetime. A focused native control or selected text prevents automatic turn collapse. Switching sessions disposes the old column controller while retaining its choices; reloading resets those choices. One timer updates visible active-turn labels without an aria-live announcement every second. Expanding a control restores its viewport position after native bottom-follow layout; a new pointer, touch, wheel, or keyboard gesture cancels the delayed restoration.
+
+Disabling or uninstalling removes the header subscription, controls, visibility attributes, generated ids, MutationObserver, timers, dictionaries, and stylesheet. Every original row becomes visible. There is no network request, persistent browser storage, or host-side behavior.
+
+## Styles and compatibility
+
+Typography and tables use conversation-owned `data-*` attributes, the slot renderer's `[data-slot]`, and semantic Markdown descendants. Every conversation selector starts with `body` so it outranks equal-specificity CSS-module defaults regardless of stylesheet order. The stylesheet is reference counted per document.
+
+Removed semantic anchors leave the affected enhancement inactive. Browser appearance and native lifecycle integration are separate checks: unit tests cover the policy and reversible attachment; the assembled test boots actual Harness and plugin bundles. Built-in light/dark themes retain palette ownership through `--dsw-*` tokens. Competing layout plugins may override the same geometry.
 
 ## Non-goals
 
-- Aggregating tool calls into a new synthetic "worked for" row.
-- Hiding reasoning or context by default.
-- Replacing the conversation header, sidebar, or editor layout.
-- Changing Markdown structure or model prompting.
-- Reproducing Codex's color palette, iconography, or chrome.
-
-Those require product-level renderer or view contributions and should be evaluated separately from typography alignment.
+Changing model requests or session logs, replacing native tool widgets, modifying the sidebar or editor, copying Codex's palette, and adding an extra Settings panel are outside this plugin's scope.
