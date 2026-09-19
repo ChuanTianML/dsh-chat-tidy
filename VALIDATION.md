@@ -7,7 +7,7 @@ Validated on 2026-09-19 against the built DeepSeek Harness source checkout `c615
 ### Automated checks
 
 - `pnpm run check` passed, including strict source/test TypeScript checking, ESLint, all unit tests, both bundle builds, and the generated-bundle freshness check.
-- `pnpm run pack:check` passed; the dry run contained 34 declared release files and excluded private review material, source tests, local profiles, and credentials.
+- `pnpm run pack:check` passed; the dry run contained 35 declared release files and excluded private review material, source tests, local profiles, and credentials.
 - 51 Vitest tests passed across 5 files: turn/final-answer classification, mixed reasoning and Markdown, passive-tool grouping, failed and nested calls, pending interactions, incomplete history, interruption, native DOM mounting, selection/focus protection, manual expansion, session lifecycle, timers, scrolling, disposal, styles, and localization.
 - Both distributable bundles were rebuilt. The generated-bundle freshness gate is part of `pnpm run check`.
 - `pnpm run test:harness` passed its assembled regression with the actual Harness ModuleLoader, Chat projection, React renderers, and built plugin bundle. This is a jsdom integration check, not a browser screenshot test.
