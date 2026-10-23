@@ -4,19 +4,27 @@ import { Disclosure, type Choices } from './disclosure.ts'
 import { project, type Snapshot } from './model.ts'
 import type { Translate } from './locales.ts'
 
+/** Newer hosts keep Chat in its own store and own their process disclosure. */
+export type SessionSnapshot = Snapshot | { readonly running: boolean; readonly chat?: undefined }
+
 /** Standard and injected props supplied by Harness's session header slot. */
 export interface BridgeProps {
   readonly sessionId: string
-  readonly useSession: <T>(selector: (snapshot: Snapshot) => T) => T
+  readonly useSession: <T>(selector: (snapshot: SessionSnapshot) => T) => T
   readonly t: Translate
   readonly choices: Choices
 }
 
 /** Mount the presentation controller without replacing a native view or renderer. */
-export function Bridge({ useSession, sessionId, t, choices }: BridgeProps) {
+export function Bridge({ useSession, ...props }: BridgeProps) {
+  const snapshot = useSession(value => value)
+  if (snapshot.chat === undefined) return null
+  return <LegacyBridge {...props} snapshot={snapshot} />
+}
+
+function LegacyBridge({ sessionId, t, choices, snapshot }: Omit<BridgeProps, 'useSession'> & { snapshot: Snapshot }) {
   const marker = useRef<HTMLSpanElement>(null)
   const controller = useRef<Disclosure | null>(null)
-  const snapshot = useSession(value => value)
   useLayoutEffect(() => {
     const root = marker.current?.closest('[data-slot="conversation.session.header"]')?.parentElement
     if (root === null || root === undefined) return

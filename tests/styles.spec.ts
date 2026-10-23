@@ -49,6 +49,30 @@ describe('Tidy Chat stylesheet', () => {
     for (const selector of selectors) expect(selector.startsWith('body ')).toBe(true)
   })
 
+  it('contains a wide table frame inside the reading column without inherited gutter padding', () => {
+    const hostStyle = document.createElement('style')
+    hostStyle.textContent = '.md-table-wide { width: 996px; margin-left: -124px; padding-left: 124px; }'
+    document.head.append(hostStyle)
+    document.body.innerHTML = `<section data-chat-flow-kind="assistant-step"><div data-slot="conversation.chat.node">
+      <div class="md-table-wide"><table><tbody><tr><td>Wide</td></tr></tbody></table></div>
+    </div></section>`
+    const shell = document.querySelector<HTMLElement>('.md-table-wide')!
+    const release = adoptStyles(document)
+    try {
+      const styled = getComputedStyle(shell)
+      expect(styled.paddingLeft).toBe('0px')
+      expect(styled.marginLeft).toBe('0px')
+      expect(styled.width).toBe('100%')
+      expect(styled.overflowX).toBe('auto')
+      release()
+      expect(getComputedStyle(shell).paddingLeft).toBe('124px')
+      expect(getComputedStyle(shell).marginLeft).toBe('-124px')
+    } finally {
+      release()
+      hostStyle.remove()
+    }
+  })
+
   it('reference-counts one stylesheet per document', () => {
     const releaseFirst = adoptStyles(document)
     const releaseSecond = adoptStyles(document)
