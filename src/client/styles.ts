@@ -138,6 +138,13 @@ ${TIDY_TABLE_SHELL_SELECTOR} {
   background: var(--dsw-alias-bg-base);
 }
 
+/* Native wide-table alignment padding must stay outside the painted frame. */
+${TIDY_TABLE_SHELL_SELECTOR}:where(.md-table-wide) {
+  width: 100%;
+  margin-left: 0;
+  padding-left: 0;
+}
+
 ${TIDY_TABLE_SHELL_SELECTOR} > table {
   border-collapse: separate;
   border-spacing: 0;

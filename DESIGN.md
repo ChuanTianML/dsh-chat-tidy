@@ -49,7 +49,7 @@ The blockquote bar and the table cells, both panes drawn 1:1 so the visible size
 
 Codex's Markdown editor theme establishes the compact table rhythm: each cell uses 8 px block and 12 px inline padding, adjacent body rows have a 1 px separator, and header cells use weight 600. Tidy Chat already owned the inherited 14 / 22 px type, so 0.3.0 completes those measured properties without changing cell content or alignment.
 
-The user-approved table frame is a deliberate DSH-native extension rather than a claim about Codex's table chrome. It uses a 1 px `--dsw-alias-border-l2` outer rule, DSH's existing 12 px code-block radius, `--dsw-alias-markdown-code-block-banner` for the header surface, and host border tokens for row and column rules. The table keeps `width: max-content` for wide content, adds `min-width: 100%` for short tables, and leaves the existing horizontal scrolling behavior in place.
+The user-approved table frame is a deliberate DSH-native extension rather than a claim about Codex's table chrome. It uses a 1 px `--dsw-alias-border-l2` outer rule, DSH's existing 12 px code-block radius, `--dsw-alias-markdown-code-block-banner` for the header surface, and host border tokens for row and column rules. The table keeps `width: max-content` for wide content, adds `min-width: 100%` for short tables, and scrolls inside the current containing column. Wide-table shells reset the host’s breakout width, negative left margin, and compensating left padding; the frame then starts at the first cell instead of painting the alignment padding. List and blockquote indentation remain intact. Removing the stylesheet restores the host’s original breakout geometry.
 
 ![The same Markdown table before and after the Tidy Tables component](docs/images/tidy-tables.png)
 
@@ -71,7 +71,9 @@ Supported passive tools are an explicit allowlist. Consecutive pure reasoning an
 
 Harness currently exposes a keyed node renderer but no turn-grouping renderer. Replacing Chat would duplicate its paging, scroll, composer, tool, and extension behavior. Instead, the plugin registers a nonvisual subscription in `conversation.session.header.utilities`, scopes it to that conversation column, and inserts its own buttons beside semantic native anchors.
 
-The controller reads `chat.order`, `chat.nodes`, `chat.timeline`, `running`, and `pending` through `useSession`. A child-list MutationObserver only finds native mounts and streamed children; it never infers model state from text. Own-control mutations are ignored and native mutations are coalesced. It never moves, clones, reparents, or recreates a native React node. Generated CSS-module class names are never read.
+On hosts with a separate Chat store, the Session snapshot has no `chat` field. The bridge renders no legacy controller and leaves native process disclosure in charge. Typography and table styling remain active. Returning to a legacy snapshot mounts a controller; leaving it disposes all existing visibility changes.
+
+The legacy controller reads `chat.order`, `chat.nodes`, `chat.timeline`, `running`, and `pending` through `useSession`. A child-list MutationObserver only finds native mounts and streamed children; it never infers model state from text. Own-control mutations are ignored and native mutations are coalesced. It never moves, clones, reparents, or recreates a native React node. Generated CSS-module class names are never read.
 
 Visibility uses a plugin-owned attribute; controls reference native elements through `aria-controls`, and generated ids are removed on disposal. Unmatched anchors do not cause matched siblings to disappear into a partially mounted activity group. Native detail expansion and event handlers survive the plugin's show/hide operations.
 

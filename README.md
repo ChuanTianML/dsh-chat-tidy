@@ -6,6 +6,8 @@ Tidy Chat adds Codex-inspired work disclosure, live turn timing, compact typogra
 
 [简体中文](README.zh.md)
 
+**0.4.1 compatibility update:** fixes empty left padding in wide table frames and supports hosts where Chat has moved out of the Session snapshot. On these hosts, Harness owns work timing and disclosure; Tidy Chat keeps its typography and tables without adding duplicate process controls.
+
 ## Tidy Work · new in 0.4.0
 
 - **While working:** a turn header shows “Working for …”. Progress commentary stays visible; consecutive reasoning and supported tool calls share an expandable activity summary.
@@ -49,7 +51,7 @@ Typography and spacing are measured from the Codex desktop app, then applied to 
 
 ### Tidy Tables
 
-Tables use a rounded frame, themed header, row and column rules, and compact 8 × 12 px cell padding. Short tables fill the column; wide tables retain horizontal scrolling. Content and alignment are unchanged.
+Tables use a rounded frame, themed header, row and column rules, and compact 8 × 12 px cell padding. Short tables fill the column; wide tables scroll within the reading column, including tables inside lists and blockquotes. Content and alignment are unchanged.
 
 ![The same Markdown table before and after Tidy Tables](docs/images/tidy-tables.png)
 
@@ -75,13 +77,13 @@ dsh plugin --profile web add -w /absolute/path/to/dsh-chat-tidy
 
 ## How it fits
 
-The plugin subscribes through the public session header slot and adds presentation controls at native semantic anchors. It does not replace the Chat view, move or clone native React nodes, rewrite model output, or modify session logs. It reads the session projection locally to identify turns and their final answers. It makes no network requests and writes no browser storage.
+On hosts that publish `Session.chat`, the plugin subscribes through the public session header slot and adds presentation controls at native semantic anchors. It does not replace the Chat view, move or clone native React nodes, rewrite model output, or modify session logs. It reads the session projection locally to identify turns and their final answers. It makes no network requests and writes no browser storage.
 
 Disabling or uninstalling the plugin restores all rows and removes its controls, listeners, timer, and stylesheet. There is no Settings row. Reader choices are held only in memory and reset on a page reload.
 
 Supported activity grouping currently covers reasoning and the native `bash`, `pwsh`, `read`, `write`, `edit`, `glob`, `grep`, `web_search`, and `web_fetch` tools. Other tools keep their native presentation. A missing semantic anchor leaves the corresponding content visible.
 
-- **Harness:** targets `>=0.1.0-rc.6` with the public Chat projection and session header utilities slot.
+- **Harness:** targets `>=0.1.0-rc.6`. Legacy work disclosure uses the public `Session.chat` projection and session header utilities slot. Hosts with a separate Chat store keep their native work disclosure; verified with `0.2.1-rc.2`.
 - **Light/dark and token-based themes:** host `--dsw-*` tokens retain palette ownership.
 - **Other layout plugins:** overlapping typography or flow overrides may compete; choose one layout plugin.
 - **Alternative conversation views:** work disclosure attaches only to the native Chat flow.

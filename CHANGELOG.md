@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here.
 
+## 0.4.1 - 2026-10-23
+
+### Fixed
+
+- Contain wide Markdown tables in the reading column so native gutter-alignment padding does not become an empty painted slab inside the frame ([#4](https://github.com/ChuanTianML/dsh-chat-tidy/issues/4)). Nested tables keep their list/blockquote indentation and internal horizontal scrolling.
+- Avoid a header-slot crash on newer Harness versions whose Session snapshot no longer contains `chat`. These hosts retain native work timing/disclosure while Tidy Chat continues to style text and tables.
+- Add regressions for wide-table geometry restoration and legacy/native Session transitions, plus a reproducible acceptance fixture for published Harness `0.2.1-rc.2`.
+
 ## 0.4.0 - 2026-09-19
 
 ### Added

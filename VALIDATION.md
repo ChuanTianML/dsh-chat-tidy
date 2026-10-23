@@ -1,5 +1,35 @@
 # Validation record
 
+## 0.4.1 — Issue verification and compatibility
+
+Validated on 2026-10-23 with the legacy built Harness checkout `c615b196a2796fce347b2c5c21c9276da7def0ee` and a separately installed official `@deepseek-ai/dsh@0.2.1-rc.2`. All acceptance sessions are synthetic and keyless. The existing user profile and conversations were not used.
+
+### Reproduction
+
+- **Issue #4 confirmed:** with 0.4.0 on the published host at a 1280px viewport, the wide shell had `padding-left: 124.5px`, `margin-left: -124.5px`, and a first-cell offset of 125.5px inside its painted frame. The source Markdown had no empty leading column.
+- **Issue #3 not reproduced as stated:** ordinary paragraphs measured 14px text / 22px line height and 11px between adjacent paragraphs on both hosts. Completed replies stayed visible and work details remained expandable. The report does not include the original conversation, screenshot, or host version, so these checks cannot rule out content-specific cases. The plugin preserves the model’s output language.
+- **Related current-host compatibility defect confirmed:** 0.4.0 called `project()` on a Session snapshot without `chat`, producing a header-slot `TypeError`. The current host already owns work timing and process disclosure.
+
+### Automated regression evidence
+
+Three added regression cases failed on the unmodified 0.4.0 source: inherited wide-table padding and two React subscription/lifecycle cases for a Session without Chat. After the fixes, all 54 tests across 6 files pass. The existing model/DOM suite covers completion, interrupted output, failed/unknown tools, pending interactions, missing history, selection/focus, timers, session choices, scrolling, and teardown. The new style regression also verifies restoration of native padding/margin after disposal.
+
+The legacy built-bundle assembled test passes with the actual Harness ModuleLoader, projection, and React renderers. This is separate from browser geometry acceptance.
+
+### Browser acceptance
+
+The Codex in-app browser loaded the actual published host and built plugin. After the fix, wide shells have zero left padding/margin and the first cell begins 1px inside the frame (the border). At 1680, 1280, 700, and 390 CSS px, page scroll width equals viewport width, long tables retain internal horizontal overflow, and adjacent paragraph gaps remain 11px. A keyboard ArrowRight scroll changed the long table’s `scrollLeft` from 0 to 10. Short tables and tables nested in lists/blockquotes retain their containment and indentation.
+
+Native completed disclosure opens with Enter and leaves the final answer visible. User-stopped history remains accessible. There are no duplicate plugin-owned process controls on the current host and no header-slot error after reload or session switching. The fresh acceptance tab recorded no console error. DeepSeek’s dark theme supplies the shell `rgb(21, 21, 23)` and border `rgba(255, 255, 255, 0.12)` while padding remains zero.
+
+On the legacy host, a live keyless turn retained progress while running, its timer continued after reload, and completion changed “Working” to “Worked”, folded intermediate work, and preserved the final Markdown.
+
+The current host’s Plugins switch persisted the disabled state but did not unload this installed bundle immediately, including after page reload. Restarting that isolated host removed the stylesheet entirely and restored native wide-table padding (124.5px for the top-level shell; 142.5px in the quote). This is a host activation limitation; users should restart Harness after changing plugin activation. The plugin disposer itself is covered by the lifecycle and style-restoration regressions.
+
+`pnpm run check` and `pnpm run pack:check` passed. The dry run includes 35 declared files and excludes source tests, acceptance fixtures, temporary profiles, and credentials. The built-bundle assembled regression passed separately.
+
+Reproduction fixtures and instructions live in [integration/](integration/README.md). This record is an acceptance result for those versions and scenarios, not a guarantee for every third-party theme or future host version.
+
 ## 0.4.0 — Tidy Work
 
 Validated on 2026-09-19 against the built DeepSeek Harness source checkout `c615b196a2796fce347b2c5c21c9276da7def0ee`. This release changes only the standalone plugin; the host was not patched for the feature.

@@ -6,6 +6,8 @@ Tidy Chat 为 DeepSeek Harness Web 提供受 Codex 启发的工作过程折叠�
 
 [English](README.md)
 
+**0.4.1 兼容性修复：**修复宽表格边框左侧的大片空白，并适配 Chat 已移出 Session 状态的新版 Harness。新版的工作计时与过程折叠由 Harness 原生功能负责；插件继续提供紧凑排版和表格样式。
+
 ## Tidy Work · 0.4.0 新功能
 
 - **工作中：** 顶部显示“工作中”和已用时间。进度说明保持可见，连续的思考和受支持的工具调用归入可展开的活动摘要。
@@ -91,3 +93,7 @@ DSH_HARNESS_ROOT=/absolute/path/to/deepseek_harness pnpm run test:harness
 最后一项检查需要已构建的 Harness 仓库：通过真实 ModuleLoader 加载双方的浏览器产物，在 jsdom 中运行无密钥集成测试；临时测试文件在结束后清理。页面外观另行进行浏览器验收。
 
 验证记录见 [VALIDATION.md](VALIDATION.md)，安全问题报告方式见 [SECURITY.md](SECURITY.md)。MIT 许可。
+
+### 新版 Harness 兼容性
+
+旧版通过公开的 `Session.chat` 提供会话投影时，由插件添加工作过程控件；新版使用独立 Chat store 时，保留原生工作过程控件，避免重复折叠。已在 Harness `0.2.1-rc.2` 验证。宽表格固定在当前阅读列内横向滚动，列表和引用中的表格也遵循这一规则。
